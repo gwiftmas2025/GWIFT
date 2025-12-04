@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GWIFT Milestones</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #0a3d0a, #2d862d, #aa0000, #550000);
+      background-size: 400% 400%;
+      animation: gradientAnimation 20s ease infinite;
+      color: #fff;
+      font-family: 'Press Start 2P', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    @keyframes gradientAnimation {
+      0%{background-position:0% 50%;}
+      50%{background-position:100% 50%;}
+      100%{background-position:0% 50%;}
+    }
+
+    h1 {
+      font-size: 2rem;
+      color: #00ff00;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px #00ff00;
+    }
+
+    .milestone-item {
+      width: 100%;
+      max-width: 600px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 10px;
+      margin-bottom: 15px;
+      padding: 15px;
+      text-align: left;
+      position: relative;
+      box-shadow: 0 0 15px #00ff00;
+    }
+
+    .milestone-label { font-size: 0.8rem; color: #ffb347; margin-bottom: 5px; }
+    .reward { font-size: 1rem; color: #00ffff; margin-bottom: 10px; }
+
+    .progress-container {
+      width: 100%;
+      background: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 25px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #ff0000;
+      text-align: center;
+      line-height: 25px;
+      color: #fff;
+      font-weight: bold;
+      transition: width 0.5s ease-in-out;
+    }
+
+    .airdrop-info { font-size: 0.8rem; color: #00ffff; margin-bottom: 10px; text-shadow: 0 0 5px #00ffff; }
+    .holders-rule { font-size: 0.8rem; color: #00ff00; margin-bottom: 10px; text-shadow: 0 0 5px #00ff00; }
+
+    .social-btn {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+      background: #1DA1F2;
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 25px;
+      box-shadow: 0 0 10px #1DA1F2;
+      transition: transform 0.2s;
+    }
+
+    .social-btn:hover { transform: scale(1.05); }
+
+    .footer { color: #ffb347; font-size: 0.8rem; margin-top: auto; padding-bottom: 10px; }
+
+    /* Snow animation */
+    .snowflake {
+      position: fixed;
+      top: -10px;
+      z-index: 9999;
+      user-select: none;
+      pointer-events: none;
+      color: #fff;
+      font-size: 1rem;
+      animation-name: fall;
+      animation-duration: 10s;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    @keyframes fall {
+      0% { transform: translateY(0) rotate(0deg); }
+      100% { transform: translateY(100vh) rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <h1>🎄 GWIFVING AWAY GWIFTS FOR HOLDERS 🎄</h1>
+
+  <div class="airdrop-info">
+    $GWIFT holders must like, retweet, and reply with their wallet holding $GWIFT to get airdrops!
+  </div>
+
+  <div class="holders-rule">
+    To be eligible, holders must hold at least <strong>2025 $GWIFT tokens</strong> in their wallet.
+  </div>
+
+  <a href="https://twitter.com/GWIFTMAS" target="_blank" class="social-btn">
+    Follow & Like @GWIFTMAS for winners!
+  </a>
+
+  <div id="milestonesList"></div>
+
+  <div class="footer">GWIFT - The Meme Token That Gives Back</div>
+
+  <script>
+    const milestones = [
+      {marketCap: 1000000, reward: 1000},
+      {marketCap: 10000000, reward: 10000},
+      {marketCap: 100000000, reward: 100000}
+    ];
+
+    let currentMarketCap = 5000;
+    const milestonesList = document.getElementById("milestonesList");
+
+    function renderMilestones() {
+      milestonesList.innerHTML = "";
+      let prevCap = 0;
+      milestones.forEach((m, i) => {
+        const div = document.createElement("div");
+        div.className = "milestone-item";
+        div.innerHTML = `
+          <div class="milestone-label">Milestone ${i+1}: $${m.marketCap.toLocaleString()}</div>
+          <div class="reward">Reward: $${m.reward.toLocaleString()}</div>
+          <div class="progress-container">
+            <div class="progress-bar" id="progressBar${i}">0%</div>
+          </div>
+        `;
+        milestonesList.appendChild(div);
+
+        let progress = 0;
+        if(currentMarketCap >= m.marketCap) progress = 100;
+        else if(currentMarketCap > prevCap) progress = ((currentMarketCap - prevCap)/(m.marketCap - prevCap))*100;
+
+        const bar = document.getElementById(`progressBar${i}`);
+        bar.style.width = `${progress.toFixed(1)}%`;
+        bar.innerText = `${progress.toFixed(1)}%`;
+        prevCap = m.marketCap;
+      });
+    }
+
+    renderMilestones();
+
+    function autoUpdateMarketCap() {
+      const growth = Math.random()*0.05 + 0.01;
+      currentMarketCap += currentMarketCap*growth;
+      renderMilestones();
+    }
+
+    setInterval(autoUpdateMarketCap, 14400000);
+    setInterval(autoUpdateMarketCap, 5000);
+
+    function createSnowflake() {
+      const snow = document.createElement('div');
+      snow.className = 'snowflake';
+      snow.style.left = Math.random()*window.innerWidth + 'px';
+      snow.style.fontSize = (Math.random()*10+10)+'px';
+      snow.style.opacity = Math.random();
+      snow.textContent = '❄';
+      document.body.appendChild(snow);
+      setTimeout(()=>snow.remove(),10000);
+    }
+
+    setInterval(createSnowflake, 200);
+  </script>
+</body>
+</html>
